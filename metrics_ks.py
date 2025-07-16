@@ -5,13 +5,13 @@ import pandas as pd
 import numpy as np
 from tqdm import tqdm
 from itertools import pairwise
-from littleballoffur import ForestFireSampler
+from scipy.stats import ks_2samp, wasserstein_distance
 
 import warnings
 warnings.filterwarnings("ignore", category=FutureWarning)
 warnings.filterwarnings("ignore", category=DeprecationWarning)
 
-from utils import get_stamp, set_seed, intersection, nodes_intersection_rate, edges_intersection_rate, sample_graph
+from utils import get_stamp, set_seed
 
 if __name__ == '__main__':
         parser = argparse.ArgumentParser()
@@ -32,31 +32,24 @@ os.makedirs(results_dir, exist_ok=True)
 print('data_dir:', data_dir)
 print('results_dir:', results_dir)
 
-results_file = os.path.join(results_dir, f"extra_metrics.csv")
+results_file = os.path.join(results_dir, f"ks_metrics.csv")
 
 def proccess_graphs(g1, g2, seed=13):
     set_seed(seed)
     s = get_stamp(g2)
     g1 = nx.read_gml(g1).to_undirected()
     g2 = nx.read_gml(g2).to_undirected()
-
-    isect = intersection(g1, g2)  
-    sampler = ForestFireSampler(number_of_nodes=100, seed=seed)
-    samples = [sample_graph(g1, sampler) for _ in range(100)]
-
-    nodes_intersect_rate = nodes_intersection_rate(g1, g2, isect)
-    edges_intersect_rate = edges_intersection_rate(g1, g2, isect)
-    sampled_nodes_intersect_rate = [nodes_intersection_rate(g, g2) for g in samples]
-    sampled_edges_intersect_rate = [edges_intersection_rate(g, g2) for g in samples]
-
+    a = np.asarray(list(dict(g1.degree).values()))
+    b = np.asarray(list(dict(g2.degree).values()))
+    a = a[~pd.isnull(a)]
+    b = b[~pd.isnull(b)]
+    ks_stat, ks_p = ks_2samp(a, b)
+    wd = wasserstein_distance(a, b)
     return {
         'timestamp': s,
-        'nodes_intersect_rate' : nodes_intersect_rate,
-        'edges_intersect_rate' : edges_intersect_rate,
-        'sampled_nodes_intersect_rate_mean' : np.mean(sampled_nodes_intersect_rate),
-        'sampled_edges_intersect_rate_mean' : np.mean(sampled_edges_intersect_rate),
-        'sampled_nodes_intersect_rate_std' : np.std(sampled_nodes_intersect_rate),
-        'sampled_edges_intersect_rate_std' : np.std(sampled_edges_intersect_rate),
+        'ks_stat' : ks_stat,
+        'ks_p' : ks_p,
+        'wasserstein_distance' : wd,
     }
 
 

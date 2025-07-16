@@ -21,6 +21,7 @@ if __name__ == '__main__':
     parser.add_argument('--batch_size', default=10, type=int)
     parser.add_argument('--data_dir', default=None, type=str)
     parser.add_argument('--results_dir', default=None, type=str)
+    parser.add_argument('--shapes_file', default="shapes_fix.csv", type=str)
     args = parser.parse_args()
 else:
      sys.exit()
@@ -57,7 +58,7 @@ def proccess_graph(g, seed=13):
     return betweenness_centrality_values(ug, seed=seed)
 
 
-graphs = pd.read_csv(os.path.join(results_dir, 'shapes_fix.csv'), parse_dates=True, index_col=0)
+graphs = pd.read_csv(os.path.join(results_dir, args.shapes_file), parse_dates=True, index_col=0)
 
 
 if os.path.exists(results_file):

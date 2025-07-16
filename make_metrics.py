@@ -14,6 +14,7 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument('--data_dir', default=None, type=str)
     parser.add_argument('--results_dir', default=None, type=str)
+    parser.add_argument('--shapes_file', default="shapes_fix.csv", type=str)
     args = parser.parse_args()
 else:
      sys.exit()
@@ -64,6 +65,9 @@ metrics = ['nodes',
         'closeness_vitality',
         'communicability_betweenness_centrality',
         'wiener_index',
+        'ks_stat',
+        'ks_p',
+        'wasserstein_distance',
 ]
 
 exclude = ['messages.csv', 'shapes.csv', 'shapes_fix.csv', "metrics.csv", 'base_metrics.csv']

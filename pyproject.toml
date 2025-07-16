@@ -1,8 +1,7 @@
 [project]
-name = "ttln"
+name = "ln-comprehensive-analysis"
 version = "0.1.0"
-description = ""
-readme = ""
+description = "Topology and Network Dynamics of the Lightning Network: A Comprehensive Analysis"
 requires-python = ">=3.12"
 dependencies = [
 "numpy==1.26.4",
@@ -16,6 +15,6 @@ dependencies = [
 "ray",
 "nx-parallel>=0.3",
 "networkx>=3.4.2",
-"lntopo@git+https://github.com/Ellariel/topology",
-"littleballoffur@git+https://github.com/Ellariel/littleballoffur",
+"lntopo@git+https://github.com/ellariel/topology",
+"littleballoffur@git+https://github.com/ellariel/littleballoffur",
 ]

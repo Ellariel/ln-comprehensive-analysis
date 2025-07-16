@@ -20,6 +20,7 @@ if __name__ == '__main__':
     parser.add_argument('--batch_size', default=10, type=int)
     parser.add_argument('--data_dir', default=None, type=str)
     parser.add_argument('--results_dir', default=None, type=str)
+    parser.add_argument('--shapes_file', default="shapes_fix.csv", type=str)
     args = parser.parse_args()
 else:
      sys.exit()
@@ -74,6 +75,25 @@ def proccess_graph(g, seed=13):
         'transitivity' : ray.remote(transitivity).remote(ug_ref),
         'average_clustering' : ray.remote(average_clustering).remote(ug_ref),
         'degree_assortativity' : ray.remote(degree_assortativity).remote(ug_ref),
+
+        #'burt_effective_size' : burt_effective_size.remote(ug_ref),
+        #'effective_size' : effective_size.remote(ug_ref),
+        #'min_edge_cover' : min_edge_cover.remote(ug_ref),
+        #'global_efficiency' : global_efficiency.remote(ug_ref),
+        #'mean_degree' : mean_degree.remote(ug_ref),
+        #'constraint' : constraint.remote(ug_ref),
+        #'average_node_connectivity' : average_node_connectivity.remote(ug_ref),
+        #'mean_betweenness_centrality' : mean_betweenness_centrality.remote(ug_ref),
+        #'gini_betweenness_centrality' : gini_betweenness_centrality.remote(ug_ref),
+        #'resource_allocation_index' : resource_allocation_index.remote(ug_ref),
+        #'jaccard_coefficient' : jaccard_coefficient.remote(ug_ref),
+        #'preferential_attachment' : preferential_attachment.remote(ug_ref),
+        #'common_neighbor_centrality' : common_neighbor_centrality.remote(ug_ref),
+        #'shortest_path_length' : shortest_path_length_approximation.remote(ug_ref),
+        #'closeness_vitality' : closeness_vitality.remote(first_component_ref),
+        #'information_centrality' : information_centrality.remote(first_component_ref),
+        #'communicability_betweenness_centrality' : communicability_betweenness_centrality.remote(first_component_ref),
+        
         'label_communities' : ray.remote(label_communities).remote(first_component_ref, seed=seed),
         'lpa_communities' : ray.remote(lpa_communities).remote(first_component_ref, seed=seed),
     }
@@ -110,7 +130,7 @@ def proccess_graph(g, seed=13):
     return metrics
 
 
-graphs = pd.read_csv(os.path.join(results_dir, 'shapes_fix.csv'), parse_dates=True, index_col=0)
+graphs = pd.read_csv(os.path.join(results_dir, args.shapes_file), parse_dates=True, index_col=0)
 
 if os.path.exists(results_file):
     results = pd.read_csv(results_file, dtype=str)

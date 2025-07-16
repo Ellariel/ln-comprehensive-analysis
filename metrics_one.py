@@ -22,6 +22,7 @@ if __name__ == '__main__':
         parser.add_argument('--num_cpu', default=35, type=int)
         parser.add_argument('--batch_size', default=10, type=int)
         parser.add_argument('--metric', default=0, type=str)
+        parser.add_argument('--shapes_file', default="shapes_fix.csv", type=str)
         args = parser.parse_args()
 else:
      sys.exit()
@@ -102,7 +103,7 @@ def proccess_graph(g, m, seed=13):
     }
 
 
-graphs = pd.read_csv(os.path.join(results_dir, 'shapes_fix.csv'), parse_dates=True, index_col=0)
+graphs = pd.read_csv(os.path.join(results_dir, args.shapes_file), parse_dates=True, index_col=0)
 
 if os.path.exists(results_file):
     results = pd.read_csv(results_file, dtype=str)

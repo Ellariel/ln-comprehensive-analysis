@@ -13,6 +13,11 @@ from sklearn.metrics import r2_score
 
 
 
+def gap_dilation(df):
+    idx = df.isna()
+    return df.mask(idx.shift() | idx.shift(-1) | idx, np.nan)
+
+
 def set_seed(seed=13):
     random.seed(seed)
     np.random.seed(seed)
@@ -532,4 +537,5 @@ def diameter_approximation(g, copy=True, seed=13):
         return nx.approximation.diameter(g, seed=seed)
     except Exception as e:
         print(e)
-    return np.max([np.max(j.values()) for i, j in nx.shortest_path_length(g)])
+    return np.max([np.max(list(j.values())) for i, j in nx.shortest_path_length(g)])
+    

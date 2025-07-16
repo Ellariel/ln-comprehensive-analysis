@@ -21,6 +21,7 @@ if __name__ == '__main__':
         parser = argparse.ArgumentParser()
         parser.add_argument('--data_dir', default=None, type=str)
         parser.add_argument('--results_dir', default=None, type=str)
+        parser.add_argument('--shapes_file', default="shapes_fix.csv", type=str)
         args = parser.parse_args()
 else:
      sys.exit()
@@ -37,7 +38,7 @@ print('data_dir:', data_dir)
 print('results_dir:', results_dir)
 
 
-graphs = pd.read_csv(os.path.join(results_dir, 'shapes_fix.csv'), parse_dates=True, index_col=0)
+graphs = pd.read_csv(os.path.join(results_dir, args.shapes_file), parse_dates=True, index_col=0)
 
 
 if os.path.exists(results_file):

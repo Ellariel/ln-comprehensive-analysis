@@ -19,6 +19,7 @@ if __name__ == '__main__':
         parser = argparse.ArgumentParser()
         parser.add_argument('--data_dir', default=None, type=str)
         parser.add_argument('--results_dir', default=None, type=str)
+        parser.add_argument('--shapes_file', default="shapes_fix.csv", type=str)
         args = parser.parse_args()
 else:
      sys.exit()
@@ -33,7 +34,7 @@ os.makedirs(results_dir, exist_ok=True)
 print('data_dir:', data_dir)
 print('results_dir:', results_dir)
 
-graphs = pd.read_csv(os.path.join(results_dir, 'shapes_fix.csv'), parse_dates=True, index_col=0)
+graphs = pd.read_csv(os.path.join(results_dir, args.shapes_file), parse_dates=True, index_col=0)
 
 results = [get_stamp(i) for i in glob(data_dir + "/*.txs.pkl")]
 
