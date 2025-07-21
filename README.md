@@ -41,4 +41,3 @@ doi = {},
 - The snapshot reconstruction scripts are in a separate repository: https://github.com/ellariel/ln-data-preparation.
 - Native pathfinding algorithms are based on [[Kumble & Roos, 2021]](https://ieeexplore.ieee.org/document/9566199); [[Kumble, Epema & Roos, 2021]](https://arxiv.org/pdf/2107.10070.pdf); see also, [GitHub](https://github.com/SatwikPrabhu/Attacking-Lightning-s-anonymity).
 
-
