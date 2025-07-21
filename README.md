@@ -1,8 +1,8 @@
 ## Topology and Network Dynamics of the Lightning Network: A Comprehensive Analysis
 
-These are the data and scripts associated with the paper on the comprehensive analysis of the network’s topology and its temporal dynamics. The folder contains several scripts and a Dockerfile used to compute various network science metrics. The final results of these calculations are available in `result/metrics.csv` and they are merged with `make_metrics.py`. All figures from the paper can be reproduced using the `make_figures.py` script.
+These are the data and scripts associated with the paper on the comprehensive analysis of the network’s topology and its temporal dynamics. The folder contains several scripts and a Dockerfile used to compute various network science metrics. The final results of these calculations are available in `result/metrics.csv` and they are merged with `make_metrics.py`. All figures from the analysis paper can be reproduced using the `make_figures.py` script.
 
-Note that since the raw data is quite large, we did not mirror it here, but it can be directly downloaded from [(Decker, 2020)](https://github.com/lnresearch/topology). Working and temporary data and results are also not stored here, but can be reproduced with the scripts available, see `metrics_*.py`.
+Note that since the raw data is quite large, we did not mirror it here, but it can be directly downloaded from [(Decker, 2020)](https://github.com/lnresearch/topology). Intermediate and temporary data are also not stored here, but can be reproduced with available scripts. The snapshot reconstruction scripts are in a separate repository: https://github.com/ellariel/ln-data-preparation.
 
 The repository includes the following calculated metrics (see `utils.py`):
 
@@ -38,7 +38,7 @@ doi = {},
 ### Sources and References
 
 - Raw data snapshots of the Lightning Network are obtained from [(Decker, 2020)](https://github.com/lnresearch/topology).
-- The snapshot reconstruction scripts are in a separate repository: https://github.com/ellariel/ln-data-preparation
+- The snapshot reconstruction scripts are in a separate repository: https://github.com/ellariel/ln-data-preparation.
 - Native pathfinding algorithms are based on [[Kumble & Roos, 2021]](https://ieeexplore.ieee.org/document/9566199); [[Kumble, Epema & Roos, 2021]](https://arxiv.org/pdf/2107.10070.pdf); see also, [GitHub](https://github.com/SatwikPrabhu/Attacking-Lightning-s-anonymity).
 
 

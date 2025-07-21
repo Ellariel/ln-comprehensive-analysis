@@ -70,7 +70,7 @@ metrics = ['nodes',
         'wasserstein_distance',
 ]
 
-exclude = ['messages.csv', 'shapes.csv', 'shapes_fix.csv', "metrics.csv", 'base_metrics.csv']
+exclude = ['messages.csv', 'metrics.csv', 'base_metrics.csv', args.shapes_file]
 files = [i for i in glob.glob(os.path.join(results_dir, "*.csv")) if os.path.basename(i) not in exclude]
 data = pd.read_csv(os.path.join(results_dir, 'base_metrics.csv'), index_col=0)
 
