@@ -120,6 +120,7 @@ COPY . /app/
 
 # USER app
 # USER root
+
 WORKDIR /app/scripts
 
 # Strictly optional, but I like it for introspection of what I've built
