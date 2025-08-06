@@ -3,6 +3,7 @@ __pycache__
 .conda
 .python-version
 *.lock
+*.ipynb
 *.log
 *.gsp.bz2
 *.txs.pkl
