@@ -1,10 +1,10 @@
 ## Topology and Network Dynamics of the Lightning Network: A Comprehensive Analysis
 
-These are the data and scripts associated with the paper on the comprehensive analysis of the network’s topology and its temporal dynamics. The folder contains several scripts and a Dockerfile used to compute various network science metrics. The final results of these calculations are available in `result/metrics.csv` and they are merged with `make_metrics.py`. All figures from the analysis paper can be reproduced using the `make_figures.py` script.
+These are the data and scripts associated with the paper on the comprehensive analysis of the network’s topology and its temporal dynamics. The folder contains several scripts and a Dockerfile used to compute various network science metrics. The final results of these calculations are available in `results/metrics.csv` and they are merged with `make_metrics.py`. All figures from the analysis paper can be reproduced using the `make_figures.py` script.
 
 Note that since the raw data is quite large, we did not mirror it here, but it can be directly downloaded from [(Decker, 2020)](https://github.com/lnresearch/topology). Intermediate and temporary data are also not stored here, but can be reproduced with available scripts. The snapshot reconstruction scripts are in a separate repository: https://github.com/ellariel/ln-data-preparation.
 
-The repository includes the following calculated metrics (see `utils.py`):
+The repository includes the following calculated metrics (see `scripts/utils.py`):
 
  **Category**|**Metrics and attributes**                    
 -------------|--------------------------

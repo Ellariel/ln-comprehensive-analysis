@@ -14,7 +14,7 @@ import seaborn as sns
 import warnings
 warnings.filterwarnings("ignore")
 
-from utils import gini_coefficient, set_seed, gap_dilation
+from scripts.utils import gini_coefficient, set_seed, gap_dilation
 
 
 
