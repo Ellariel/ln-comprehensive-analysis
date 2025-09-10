@@ -12,7 +12,7 @@ Basic Network Structure|nodes, edges (channels), components, density, diameter, 
 Connectivity & Resilience|bridges, average node connectivity, minimal edge cover, transitivity, average clustering
 Function & Dynamics|global efficiency, information centrality, mean betweenness centrality, communicability betweenness centrality, common neighbor centrality, constraint value, effective size, Burt's effective size, closeness vitality
 Emergent Patterns|resource allocation index, Jaccard coefficient, preferential attachment, label communities (FLP), lpa communities (ALP)
-Other|payment hop distribution and degree distribution approximation parameters, Gini betweenness centrality, node intersection rate, channel intersection rate, Wiener index, Kolmogorov–Smirnov statistic, Wasserstein distance
+Other|payment hop distribution and degree distribution approximation parameters, degree distribution entropy, Gini betweenness centrality, node intersection rate, channel intersection rate, Wiener index, Kolmogorov–Smirnov statistic, Wasserstein distance
 
 
 ### Citation
@@ -40,4 +40,5 @@ doi = {},
 - Raw data snapshots of the Lightning Network are obtained from [(Decker, 2020)](https://github.com/lnresearch/topology).
 - The snapshot reconstruction scripts are in a separate repository: https://github.com/ellariel/ln-data-preparation.
 - Native pathfinding algorithms are based on [[Kumble & Roos, 2021]](https://ieeexplore.ieee.org/document/9566199); [[Kumble, Epema & Roos, 2021]](https://arxiv.org/pdf/2107.10070.pdf); see also, [GitHub](https://github.com/SatwikPrabhu/Attacking-Lightning-s-anonymity).
+
 

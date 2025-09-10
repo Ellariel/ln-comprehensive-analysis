@@ -16,5 +16,7 @@ dependencies = [
 "nx-parallel>=0.3",
 "networkx>=3.4.2",
 "lntopo@git+https://github.com/ellariel/topology",
+# "lntopo@git+https://github.com/lnresearch/topology",
 "littleballoffur@git+https://github.com/ellariel/littleballoffur",
+# "lntopo@git+https://github.com/lnresearch/topology",
 ]

@@ -7,6 +7,7 @@ import requests, random
 
 
 def normalize(x, min, max):
+    x = float(x)
     if x <= min:
         return 0.0
     if x > max:

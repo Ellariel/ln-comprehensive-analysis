@@ -1,7 +1,6 @@
 import os, sys
 import argparse
 import pickle
-import networkx as nx
 import pandas as pd
 from tqdm import tqdm
 
@@ -29,9 +28,12 @@ else:
 base_dir = os.path.dirname(__file__)
 if 'app' in base_dir:
     base_dir = './'
-data_dir = os.path.join(base_dir, "data") if args.data_dir is None else args.data_dir
-results_dir = os.path.join(base_dir, "results") if args.results_dir is None else args.results_dir
+data_dir = os.path.abspath(os.path.join(base_dir, 
+                        "..", "data")) if args.data_dir is None else args.data_dir
+results_dir = os.path.abspath(os.path.join(base_dir, 
+                        "..", "results")) if args.results_dir is None else args.results_dir
 os.makedirs(results_dir, exist_ok=True)
+
 results_file = os.path.join(results_dir, f"tx_metrics.pkl")
 
 print('data_dir:', data_dir)

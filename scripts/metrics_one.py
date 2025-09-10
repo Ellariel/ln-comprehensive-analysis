@@ -2,7 +2,6 @@ import os, sys
 import ray
 import math
 import argparse
-import numpy as np
 import pandas as pd
 from tqdm import tqdm
 import networkx as nx
@@ -30,9 +29,12 @@ else:
 base_dir = os.path.dirname(__file__)
 if 'app' in base_dir:
     base_dir = './'
-data_dir = os.path.join(base_dir, "data") if args.data_dir is None else args.data_dir
-results_dir = os.path.join(base_dir, "results") if args.results_dir is None else args.results_dir
+data_dir = os.path.abspath(os.path.join(base_dir, 
+                        "..", "data")) if args.data_dir is None else args.data_dir
+results_dir = os.path.abspath(os.path.join(base_dir, 
+                        "..", "results")) if args.results_dir is None else args.results_dir
 os.makedirs(results_dir, exist_ok=True)
+
 cpu_count = max(1, os.cpu_count() - 2)
 num_cpu = min(args.num_cpu, cpu_count)
 batch_size = min(args.batch_size, cpu_count)
