@@ -1,9 +1,7 @@
 import os, sys
 import glob
 import argparse
-import numpy as np
 import pandas as pd
-from tqdm import tqdm
 
 import warnings
 warnings.filterwarnings("ignore", category=FutureWarning)
@@ -68,6 +66,8 @@ metrics = ['nodes',
         'ks_stat',
         'ks_p',
         'wasserstein_distance',
+        'degree_dist_entropy',
+        'degree_dist_entropy_norm',
 ]
 
 exclude = ['messages.csv', 'metrics.csv', 'base_metrics.csv', args.shapes_file]

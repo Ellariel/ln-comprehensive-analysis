@@ -4,7 +4,9 @@ from tqdm import tqdm
 
 
 base_dir = os.path.dirname(__file__)
-data_dir = os.path.join(base_dir, "data")
+data_dir = os.path.abspath(os.path.join(base_dir, 
+                                        "..", 
+                                        "data"))
 
 dates = ['20201014', '20201102', '20201203',
         '20210104', '20210908', '20220823', '20230924']

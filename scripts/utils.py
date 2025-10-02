@@ -10,7 +10,23 @@ from lntopo.common import DatasetFile
 from lntopo.parser import ChannelAnnouncement, ChannelUpdate, NodeAnnouncement
 from scipy.optimize import curve_fit
 from sklearn.metrics import r2_score
+from scipy.stats import entropy
 
+
+
+def degree_distribution_entropy(g, base=2, copy=False):
+    try:
+        if copy:
+            g = deepcopy(g)   
+        degrees = np.array(g.degree)[:, 1].astype('float64')
+        values, counts = np.unique(degrees, return_counts=True)
+        pk = counts / counts.sum()
+        h = entropy(pk, base=base)
+        k = len(values)
+        h_norm = h / np.log(k) * np.log(base)
+        return h, h_norm
+    except Exception as e:
+        print(e)
 
 
 def gap_dilation(df):
