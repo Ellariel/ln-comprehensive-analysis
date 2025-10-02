@@ -20,11 +20,13 @@ else:
 
 snapshot = 'gossip-20230924.gsp.bz2'
 base_dir = os.path.dirname(__file__)
+
 data_dir = os.path.abspath(os.path.join(base_dir, 
                         "..", "data")) if args.data_dir is None else args.data_dir
 results_dir = os.path.abspath(os.path.join(base_dir, 
                         "..", "results")) if args.results_dir is None else args.results_dir
 os.makedirs(results_dir, exist_ok=True)
+
 
 print('data_dir:', data_dir)
 print('results_dir:', results_dir)
