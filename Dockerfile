@@ -120,8 +120,7 @@ COPY . /app/
 
 # USER app
 # USER root
-
-WORKDIR /app/scripts
+WORKDIR /app
 
 # Strictly optional, but I like it for introspection of what I've built
 # and run a smoke test that the application can, in fact, be imported.
