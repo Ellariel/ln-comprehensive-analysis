@@ -24,13 +24,14 @@ Valko, D., & Marx Gómez, J. (2025). Topology and Network Dynamics of the Lightn
 ```python
 @misc{ValkoMarxGomez2025,
 title={Topology and Network Dynamics of the Lightning Network: A Comprehensive Analysis}, 
-author={Danila Valko and Jorge Marx Gómez},
+author={Danila Valko and Jorge {Marx G\'omez}},
 year={2025},
-journal = {},
-month = {},
-volume = {},
-pages = {},
-doi = {},
+publisher={arXiv},
+howpublished={arXiv},
+doi={10.48550/arXiv.2512.20641},
+eprint={2512.20641},
+archivePrefix={arXiv},
+primaryClass={cs.SI},
 }
 ```
 
@@ -38,7 +39,7 @@ doi = {},
 ### Sources and References
 
 - Raw data snapshots of the Lightning Network are obtained from [(Decker, 2020)](https://github.com/lnresearch/topology).
-- The snapshot reconstruction scripts are in a separate repository: https://github.com/ellariel/ln-data-preparation.
+- Snapshot reconstruction scripts are in a separate repository: https://github.com/ellariel/ln-data-preparation.
 - Native pathfinding algorithms are based on [[Kumble & Roos, 2021]](https://ieeexplore.ieee.org/document/9566199); [[Kumble, Epema & Roos, 2021]](https://arxiv.org/pdf/2107.10070.pdf); see also, [GitHub](https://github.com/SatwikPrabhu/Attacking-Lightning-s-anonymity).
 
 
