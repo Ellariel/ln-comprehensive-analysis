@@ -2,6 +2,7 @@ import os, sys
 import ray
 import math
 import argparse
+import numpy as np
 import pandas as pd
 from tqdm import tqdm
 import networkx as nx
@@ -29,6 +30,7 @@ else:
 base_dir = os.path.dirname(__file__)
 if 'app' in base_dir:
     base_dir = './'
+
 data_dir = os.path.abspath(os.path.join(base_dir, 
                         "..", "data")) if args.data_dir is None else args.data_dir
 results_dir = os.path.abspath(os.path.join(base_dir, 
