@@ -5,7 +5,7 @@ Try the Lightning Network Topology Dashboard based on this analysis:
 
 These are the data and scripts associated with the paper on the comprehensive analysis of the network’s topology and its temporal dynamics. The folder contains several scripts and a Dockerfile used to compute various network science metrics. The final results of these calculations are available in `results/metrics.csv` and they are merged with `make_metrics.py`. All figures from the analysis paper can be reproduced using the `make_figures.py` script.
 
-Note that since the raw data is quite large, we did not mirror it here, but it can be directly downloaded from [(Decker, 2020)](https://github.com/lnresearch/topology). Intermediate and temporary data are also not stored here, but can be reproduced with available scripts. The snapshot reconstruction scripts are in a separate repository: https://github.com/ellariel/ln-data-preparation.
+Note that since the raw data is quite large, we did not mirror it here, but it can be directly downloaded from [(Decker, 2020)](https://github.com/lnresearch/topology). Intermediate and temporary data are also not stored here, but can be reproduced with available scripts. The snapshot reconstruction scripts are in a separate repository: [github.com/ellariel/ln-data-preparation](https://github.com/ellariel/ln-data-preparation).
 
 The repository includes the following calculated metrics (see `scripts/utils.py`):
 
@@ -27,7 +27,7 @@ Valko, D., & Marx Gómez, J. (2026). Topological and temporal stability analysis
 
 ```python
 @article{ValkoMarxGomez2026,
-title={Topological and temporal stability analysis of the lightning network.}, 
+title={Topological and temporal stability analysis of the lightning network}, 
 author={Danila Valko and Jorge {Marx G\'omez}},
 year={2026},
 journal={Applied Network Science},
