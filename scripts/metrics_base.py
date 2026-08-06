@@ -30,7 +30,6 @@ from utils import *
 base_dir = os.path.dirname(__file__)
 if 'app' in base_dir:
     base_dir = './'
-
 data_dir = os.path.abspath(os.path.join(base_dir, 
                         "..", "data")) if args.data_dir is None else args.data_dir
 results_dir = os.path.abspath(os.path.join(base_dir, 

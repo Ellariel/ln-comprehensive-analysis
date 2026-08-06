@@ -5,11 +5,15 @@ __pycache__
 *.lock
 *.ipynb
 *.log
+#*.json
 *.gsp.bz2
 *.txs.pkl
+*.directed.pkl
+*.undirected.pkl
 *.gml.gz
 *.gml
 *.gsp
 *.pyc
-*.json
 *.fix
+lifetime/
+old/
