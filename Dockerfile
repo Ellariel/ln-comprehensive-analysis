@@ -10,7 +10,7 @@ SHELL ["sh", "-exc"]
 ### This should be a separate build container for better reuse.
 
 RUN <<EOT
-apt-get update -qy
+apt-get update -qy && \
 apt-get install -qyy \
     -o APT::Install-Recommends=false \
     -o APT::Install-Suggests=false \
@@ -52,10 +52,11 @@ ENV UV_LINK_MODE=copy \
 RUN --mount=type=cache,target=/root/.cache \
     --mount=type=bind,source=uv.lock,target=/uv.lock \
     --mount=type=bind,source=pyproject.toml,target=/pyproject.toml \
+    ulimit -n 65536 && \
     uv sync \
-        --locked \
-        --no-dev \
-        --no-install-project
+    --locked \
+    --no-dev \
+    --no-install-project
 
 # Now install the rest from `/src`: The APPLICATION w/o dependencies.
 # `/src` will NOT be copied into the runtime container.
@@ -85,14 +86,15 @@ EOT
 
 #ENTRYPOINT ["/docker-entrypoint.sh"]
 # See <https://hynek.me/articles/docker-signals/>.
-ENTRYPOINT ["python", "metrics_base.py"] 
+# ENTRYPOINT ["python", "metrics_base.py"] 
 # --metrics extra --num_cpu 30"]
+ENTRYPOINT ["/bin/bash"]
 STOPSIGNAL SIGINT
 
 # Note how the runtime dependencies differ from build-time ones.
 # Notably, there is no uv either!
 RUN <<EOT
-apt-get update -qy
+apt-get update -qy && \
 apt-get install -qyy \
     -o APT::Install-Recommends=false \
     -o APT::Install-Suggests=false \
@@ -120,8 +122,7 @@ COPY . /app/
 
 # USER app
 # USER root
-
-WORKDIR /app/scripts
+WORKDIR /app
 
 # Strictly optional, but I like it for introspection of what I've built
 # and run a smoke test that the application can, in fact, be imported.
@@ -132,8 +133,37 @@ WORKDIR /app/scripts
 # EOT
 
 
-### RUN DOCKER
-
+### RUN PODMAN
 # /opt/pkm/by-platform/x86_64-linux-gnu/podman/sbin/podman-rootless-setuptool.sh && export PATH=$PATH:/opt/pkm/by-platform/x86_64-linux-gnu/podman/bin
 # podman build . --format docker --tag ttln
-# podman run -it --shm-size=10.24gb --memory=180g --mount type=bind,source=/home/dvalko/results,target=/app/results --entrypoint=/bin/bash ttln:latest
+# podman run -it --shm-size=16gb --memory=128g --cpus=64 --mount type=bind,source=/home/dvalko/data,target=/app/data --mount type=bind,source=/home/dvalko/results,target=/app/results --mount type=bind,source=/home/dvalko/tmp,target=/app/tmp --entrypoint=/bin/bash ttln:latest
+# export RAY_TMPDIR=/app/tmp
+# cd scripts
+
+
+### RUN DOCKER
+# docker build . --tag ttln
+# docker run --shm-size=10.24g --runtime=runc -it --memory=100g --mount type=bind,source=/home/dvalko/results,target=/app/results --mount type=bind,source=/home/dvalko/data,target=/app/data --mount type=bind,source=/home/dvalko/tmp,target=/app/tmp --entrypoint=/bin/bash ttln:latest
+# export RAY_TMPDIR=/app/tmp
+# cd scripts
+
+### COMMANDS
+
+# python metrics_channel_intersect_cost.py --alg DEF --directed 0 --num_cpu 60 --batch_size 60 --verbose 1
+# python metrics_channel_intersect_cost.py --alg CAP --directed 1 --num_cpu 60 --batch_size 60 --verbose 1
+# python metrics_channel_intersect_cost.py --alg LND --directed 0 --num_cpu 60 --batch_size 60 --verbose 1
+
+# python metrics_channel_intersect_cost_bootstrap.py --alg DEF --directed 0 --num_cpu 11 --batch_size 11 --verbose 1 --bunch_size 500
+# python metrics_channel_intersect_cost_bootstrap.py --alg CAP --directed 0 --num_cpu 11 --batch_size 11 --verbose 1 --bunch_size 500
+# python metrics_channel_intersect_cost_bootstrap.py --alg LND --directed 0 --num_cpu 11 --batch_size 11 --verbose 1 --bunch_size 500
+# python metrics_channel_intersect_cost_bootstrap.py --alg CLN --directed 0 --num_cpu 11 --batch_size 11 --verbose 1 --bunch_size 500
+# python metrics_channel_intersect_cost_bootstrap.py --alg ECL --directed 0 --num_cpu 11 --batch_size 11 --verbose 1 --bunch_size 500
+
+# EXACT RESULTS
+#--alg DEF --directed 1
+#--alg DEF --directed 0
+#--alg CAP --directed 0
+#--alg CAP --directed 1
+#--alg LND --directed 0
+#--alg LND --directed 1
+

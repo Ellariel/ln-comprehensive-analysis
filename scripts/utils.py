@@ -11,14 +11,16 @@ from lntopo.parser import ChannelAnnouncement, ChannelUpdate, NodeAnnouncement
 from scipy.optimize import curve_fit
 from sklearn.metrics import r2_score
 from scipy.stats import entropy
-
+import powerlaw
+from scipy.stats import kstest
+from powerlaw.statistics import ccdf
 
 
 def degree_distribution_entropy(g, base=2, copy=False):
     try:
         if copy:
-            g = deepcopy(g)   
-        degrees = np.array(g.degree)[:, 1].astype('float64')
+            g = deepcopy(g)
+        degrees = np.array(g.degree)[:, 1].astype("float64")
         values, counts = np.unique(degrees, return_counts=True)
         pk = counts / counts.sum()
         h = entropy(pk, base=base)
@@ -45,9 +47,9 @@ def read_shape(fname):
 
 
 def get_stamp(s):
-    s = os.path.split(s)[1].split('.')[0]
-    if '-' in s:
-        s = s.split('-')[1]
+    s = os.path.split(s)[1].split(".")[0]
+    if "-" in s:
+        s = s.split("-")[1]
     return s
 
 
@@ -62,7 +64,7 @@ def edges_intersection_rate(g1, g2, common_nodes=None):
     total_edges = 0
     for c in combinations(common_nodes, 2):
         total_edges += 1
-        try: 
+        try:
             if nx.shortest_path_length(g1, *c) >= nx.shortest_path_length(g2, *c):
                 matched_edges += 1
         except:
@@ -77,7 +79,7 @@ def nodes_intersection_rate(g1, g2, common_nodes=None):
 
 
 def sample_graph(g, sampler=None):
-    g = nx.convert_node_labels_to_integers(g, label_attribute='old_id')
+    g = nx.convert_node_labels_to_integers(g, label_attribute="old_id")
     s = sampler.sample(g)
     mapping = {k: g.nodes[k]["old_id"] for k in s.nodes()}
     return nx.relabel_nodes(s, mapping)
@@ -89,29 +91,32 @@ def gini_coefficient(values, drop_zeros=False, tolerance=0.0000001):
     # based on bottom eq: http://www.statsdirect.com/help/content/image/stat0206_wmf.gif
     # from: http://www.statsdirect.com/help/default.htm#nonparametric_methods/gini.htm
 
-    x = np.array(list(values)).flatten() # all values are treated equally, arrays must be 1d
+    x = np.array(
+        list(values)
+    ).flatten()  # all values are treated equally, arrays must be 1d
     x_min = np.amin(x)
     if x_min < tolerance:
-        x += np.abs(x_min) # values cannot be negative
+        x += np.abs(x_min)  # values cannot be negative
     if drop_zeros:
         x = x[x >= tolerance]
     else:
-        x += tolerance # values cannot be 0
-    n = x.shape[0] # number of array elements
-    x = np.sort(x) # values must be sorted
-    idx = np.arange(1, n + 1) # index per array element
-    return np.sum((2 * idx - n  - 1) * x) / (n * np.sum(x)) # Gini coefficient
+        x += tolerance  # values cannot be 0
+    n = x.shape[0]  # number of array elements
+    x = np.sort(x)  # values must be sorted
+    idx = np.arange(1, n + 1)  # index per array element
+    return np.sum((2 * idx - n - 1) * x) / (n * np.sum(x))  # Gini coefficient
 
 
 def fit_powlaw(g, copy=False):
     """Fit data to a power law with weights according to a log scale"""
-    def powlaw(x, a, b) :
+
+    def powlaw(x, a, b):
         return a * np.power(x, b)
-    
+
     try:
         if copy:
-            g = deepcopy(g)   
-        degrees = np.array(g.degree)[:, 1].astype('float64')
+            g = deepcopy(g)
+        degrees = np.array(g.degree)[:, 1].astype("float64")
         degrees = degrees[degrees > 0]
         probs = pd.Series(degrees).value_counts() / len(g.nodes)
         xdata, ydata = list(probs.index), list(probs)
@@ -126,11 +131,11 @@ def fit_powlaw(g, copy=False):
         print(e)
 
 
-def betweenness_centrality_values(g, copy=True, seed=13):
+def betweenness_centrality_values(g, weight=None, copy=True, seed=13):
     try:
         if copy:
             g = deepcopy(g)
-        return list(nx.betweenness_centrality(g, seed=seed).values())
+        return list(nx.betweenness_centrality(g, weight=weight, seed=seed).values())
     except Exception as e:
         print(e)
 
@@ -162,7 +167,7 @@ def msg_counter(datafile):
                 node_announcements[ts] += 1
             else:
                 node_announcements[ts] = 1
-    return node_announcements, channel_updates, {0 : channel_announcements}
+    return node_announcements, channel_updates, {0: channel_announcements}
 
 
 def restore_graph(datafile, timestamp, verbose=True):
@@ -174,11 +179,10 @@ def restore_graph(datafile, timestamp, verbose=True):
     cutoff = timestamp - 2 * 7 * 24 * 3600
     channels = {}
     nodes = {}
-    
+
     dataset = DatasetFile().convert(datafile, 0, 0)
     for m in tqdm(dataset, desc="Replaying gossip messages", disable=not verbose):
         if isinstance(m, ChannelAnnouncement):
-
             channels[f"{m.short_channel_id}/0"] = {
                 "source": m.node_ids[0].hex(),
                 "destination": m.node_ids[1].hex(),
@@ -208,9 +212,9 @@ def restore_graph(datafile, timestamp, verbose=True):
 
             if chan is None:
                 continue
-                #raise ValueError(
+                # raise ValueError(
                 #    f"Could not find channel with short_channel_id {scid}"
-                #)
+                # )
 
             if chan["timestamp"] > ts:
                 # Skip this update, it's outdated.
@@ -223,7 +227,7 @@ def restore_graph(datafile, timestamp, verbose=True):
             if m.htlc_maximum_msat:
                 chan["htlc_maximum_msat"] = m.htlc_maximum_msat
             chan["cltv_expiry_delta"] = m.cltv_expiry_delta
-            
+
         elif isinstance(m, NodeAnnouncement):
             node_id = m.node_id.hex()
 
@@ -231,7 +235,7 @@ def restore_graph(datafile, timestamp, verbose=True):
             if old is not None and old["timestamp"] > m.timestamp:
                 continue
 
-            alias = m.alias.replace(b'\x00', b'').decode('ASCII', 'ignore')
+            alias = m.alias.replace(b"\x00", b"").decode("ASCII", "ignore")
             nodes[node_id] = {
                 "id": node_id,
                 "timestamp": m.timestamp,
@@ -245,7 +249,9 @@ def restore_graph(datafile, timestamp, verbose=True):
 
     # Cleanup pass: drop channels that haven't seen an update in 2 weeks
     todelete = []
-    for scid, chan in tqdm(channels.items(), desc="Pruning outdated channels", disable=not verbose):
+    for scid, chan in tqdm(
+        channels.items(), desc="Pruning outdated channels", disable=not verbose
+    ):
         if chan["timestamp"] < cutoff:
             todelete.append(scid)
         else:
@@ -263,9 +269,9 @@ def restore_graph(datafile, timestamp, verbose=True):
     for scid in todelete:
         del channels[scid]
 
-    nodes = [n for n in nodes.values() if n["in_degree"] > 0 or n['out_degree'] > 0]
+    nodes = [n for n in nodes.values() if n["in_degree"] > 0 or n["out_degree"] > 0]
 
-    #if len(channels) == 0:
+    # if len(channels) == 0:
     #    print(
     #        "ERROR: no channels are left after pruning, make sure to select a"
     #        "timestamp that is covered by the dataset."
@@ -318,11 +324,11 @@ def transitivity(g, copy=True):
         print(e)
 
 
-def average_clustering(g, copy=True):
+def average_clustering(g, weight=None, copy=True):
     try:
         if copy:
             g = deepcopy(g)
-        return nx.average_clustering(g)
+        return nx.average_clustering(g, weight=weight)
     except Exception as e:
         print(e)
 
@@ -376,7 +382,9 @@ def resource_allocation_index(g, copy=True):
     try:
         if copy:
             g = deepcopy(g)
-        return np.mean(np.array(list(nx.resource_allocation_index(g)))[:, 2].astype('float64'))
+        return np.mean(
+            np.array(list(nx.resource_allocation_index(g)))[:, 2].astype("float64")
+        )
     except Exception as e:
         print(e)
 
@@ -385,7 +393,9 @@ def jaccard_coefficient(g, copy=True):
     try:
         if copy:
             g = deepcopy(g)
-        return np.mean(np.array(list(nx.jaccard_coefficient(g)))[:, 2].astype('float64'))
+        return np.mean(
+            np.array(list(nx.jaccard_coefficient(g)))[:, 2].astype("float64")
+        )
     except Exception as e:
         print(e)
 
@@ -394,7 +404,9 @@ def preferential_attachment(g, copy=True):
     try:
         if copy:
             g = deepcopy(g)
-        return np.mean(np.array(list(nx.preferential_attachment(g)))[:, 2].astype('float64'))
+        return np.mean(
+            np.array(list(nx.preferential_attachment(g)))[:, 2].astype("float64")
+        )
     except Exception as e:
         print(e)
 
@@ -403,7 +415,9 @@ def common_neighbor_centrality(g, copy=True):
     try:
         if copy:
             g = deepcopy(g)
-        return np.mean(np.array(list(nx.common_neighbor_centrality(g)))[:, 2].astype('float64'))
+        return np.mean(
+            np.array(list(nx.common_neighbor_centrality(g)))[:, 2].astype("float64")
+        )
     except Exception as e:
         print(e)
 
@@ -413,9 +427,11 @@ def wiener_index(g, copy=True, use_first_component=True):
         if copy:
             g = deepcopy(g)
         if use_first_component:
-            components = [g.subgraph(c) 
-                            for c in sorted(nx.connected_components(g), 
-                                    key=len, reverse=True) if len(c) > 10]
+            components = [
+                g.subgraph(c)
+                for c in sorted(nx.connected_components(g), key=len, reverse=True)
+                if len(c) > 10
+            ]
             if len(components):
                 g = components[0]
         wi = nx.wiener_index(g)
@@ -430,19 +446,21 @@ def closeness_vitality(g, copy=True, normalized=True, use_first_component=True):
         if copy:
             g = deepcopy(g)
         if use_first_component:
-            components = [g.subgraph(c) 
-                            for c in sorted(nx.connected_components(g), 
-                                    key=len, reverse=True) if len(c) > 10]
+            components = [
+                g.subgraph(c)
+                for c in sorted(nx.connected_components(g), key=len, reverse=True)
+                if len(c) > 10
+            ]
             if len(components):
                 g = components[0]
         g.__networkx_cache__ = None
         wi = nx.wiener_index(g)
-        #v = np.array([nx.closeness_vitality(g, node=n, wiener_index=wi) 
+        # v = np.array([nx.closeness_vitality(g, node=n, wiener_index=wi)
         #                                for n in g.nodes])
         v = np.array(list(nx.closeness_vitality(g, wiener_index=wi).values()))
         v = v[np.isfinite(v)].mean()
         if normalized:
-            return v / wi # adj. by wiener_index
+            return v / wi  # adj. by wiener_index
         return v
     except Exception as e:
         print(e)
@@ -457,29 +475,31 @@ def constraint(g, copy=True):
         print(e)
 
 
-def effective_size(g, copy=True):
+def effective_size(g, weight=None, copy=True):
     try:
         if copy:
             g = deepcopy(g)
-        return np.mean(list(nx.effective_size(g).values()))
+        return np.mean(list(nx.effective_size(g, weight=weight).values()))
     except Exception as e:
         print(e)
 
 
-def burt_effective_size(g, copy=True):
+def burt_effective_size(g, weight=None, copy=True):
     try:
         if copy:
             g = deepcopy(g)
-        return np.mean([v / g.degree(n) for n, v in nx.effective_size(g).items()])
+        return np.mean(
+            [v / g.degree(n) for n, v in nx.effective_size(g, weight=weight).items()]
+        )
     except Exception as e:
         print(e)
 
 
-def information_centrality(g, copy=True):
+def information_centrality(g, weight=None, copy=True):
     try:
         if copy:
             g = deepcopy(g)
-        return np.mean(list(nx.information_centrality(g).values()))
+        return np.mean(list(nx.information_centrality(g, weight=weight).values()))
     except Exception as e:
         print(e)
 
@@ -489,9 +509,11 @@ def communicability_betweenness_centrality(g, copy=True, use_first_component=Tru
         if copy:
             g = deepcopy(g)
         if use_first_component:
-            components = [g.subgraph(c) 
-                            for c in sorted(nx.connected_components(g), 
-                                    key=len, reverse=True) if len(c) > 10]
+            components = [
+                g.subgraph(c)
+                for c in sorted(nx.connected_components(g), key=len, reverse=True)
+                if len(c) > 10
+            ]
             if len(components):
                 g = components[0]
         return np.mean(list(nx.communicability_betweenness_centrality(g).values()))
@@ -505,7 +527,31 @@ def lpa_communities(g, seed=13, copy=True):
             g = deepcopy(g)
         return len(list(nx.community.asyn_lpa_communities(g, seed=seed)))
     except Exception as e:
-            print(e)
+        print(e)
+
+
+def fast_label_communities(g, weight=None, seed=13, copy=True):
+    try:
+        if copy:
+            g = deepcopy(g)
+        return len(
+            list(
+                nx.community.fast_label_propagation_communities(
+                    g, weight=weight, seed=seed
+                )
+            )
+        )
+    except Exception as e:
+        print(e)
+
+
+def greedy_modularity_communities(g, weight=None, copy=True):
+    try:
+        if copy:
+            g = deepcopy(g)
+        return len(list(nx.community.greedy_modularity_communities(g, weight=weight)))
+    except Exception as e:
+        print(e)
 
 
 def label_communities(g, seed=13, copy=True):
@@ -532,17 +578,17 @@ def shortest_path_length_approximation(g, n_samples=10000, copy=True):
     if copy:
         g = deepcopy(g)
     for c in nx.connected_components(g):
-            c = g.subgraph(c)
-            n = c.nodes()
-            lengths = []
-            for _ in range(n_samples):
-                try:
-                    n1, n2 = random.choices(list(n), k=2)
-                    length = nx.shortest_path_length(c, source=n1, target=n2)
-                    lengths.append(length)
-                except:
-                    pass
-            result.append(np.mean(lengths))
+        c = g.subgraph(c)
+        n = c.nodes()
+        lengths = []
+        for _ in range(n_samples):
+            try:
+                n1, n2 = random.choices(list(n), k=2)
+                length = nx.shortest_path_length(c, source=n1, target=n2)
+                lengths.append(length)
+            except:
+                pass
+        result.append(np.mean(lengths))
     return np.max(result)
 
 
@@ -554,4 +600,44 @@ def diameter_approximation(g, copy=True, seed=13):
     except Exception as e:
         print(e)
     return np.max([np.max(list(j.values())) for i, j in nx.shortest_path_length(g)])
-    
+
+
+def fit_powerlaw(g, copy=False, xmin=None, discrete=False):
+    try:
+        if copy:
+            g = deepcopy(g)
+        degrees = np.array(list(dict(g.degree).values())).astype("float64")
+        degrees = np.sort(degrees[degrees > 0])
+        fit = powerlaw.Fit(
+            degrees, xmin=xmin, discrete=discrete, verbose=False, fit_method="KS"
+        )
+        LRatio, LR_pvalue = fit.distribution_compare(
+            "power_law",
+            "lognormal",
+            normalized_ratio=True,
+        )
+        degrees = degrees[degrees >= fit.power_law.xmin]
+        KS_stat, KS_pvalue = kstest(
+            degrees, lambda x: 1 - (x / fit.power_law.xmin) ** (1 - fit.power_law.alpha)
+        )
+        x_emp, y_emp = ccdf(degrees, xmin=fit.power_law.xmin)
+        y_pred = fit.power_law.ccdf(x_emp)
+        y_pred_pdf = fit.power_law.pdf(x_emp)
+        r_squared = r2_score(y_emp, y_pred)
+
+        return {
+            "alpha": fit.power_law.alpha,
+            "xmin": fit.power_law.xmin,
+            "KS_stat": KS_stat,
+            "KS_pvalue": KS_pvalue,
+            "LRatio": LRatio,
+            "LR_pvalue": LR_pvalue,
+            "r_squared": r_squared,
+            "x": degrees,
+            "x_emp": x_emp,
+            "y_emp": y_emp,
+            "y_pred": y_pred,
+            "y_pred_pdf": y_pred_pdf,
+        }
+    except Exception as e:
+        print(e)

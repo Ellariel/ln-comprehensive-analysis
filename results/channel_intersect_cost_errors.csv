@@ -1,0 +1,4 @@
+index,DEF,CAP,LND,CLN,ECL
+directed,"RMSE: 0.012(222), Spearman: 0.935, p=0.000","RMSE: 0.007(131), Spearman: 0.991, p=0.000",,,
+undirected,"RMSE: 0.002(331), Spearman: 0.970, p=0.000","RMSE: 0.003(175), Spearman: 0.998, p=0.000","RMSE: 0.005(314), Spearman: 0.998, p=0.000",,
+"Total RMSE: 0.007 (1173), Total Spearman: 0.980, p-value: 0.000",,,,,
